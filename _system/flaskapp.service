@@ -1,6 +1,4 @@
-# deploy to /etc/systemd/system/flaskapp.service
-
-Unit]
+[Unit]
 Description=uWSGI instance to serve flaskapp
 After=network.target
 
