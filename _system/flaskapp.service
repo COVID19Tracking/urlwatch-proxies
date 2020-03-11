@@ -6,11 +6,10 @@ After=network.target
 
 [Service]
 User=josh
-Group=www-data
+Group=josh
 WorkingDirectory=/home/josh/urlwatch-proxies
 Environment="PATH=/home/josh/urlwatch-proxies/proxyenv/bin"
-ExecStart=/home/josh/urlwatch-proxies/Environment="PATH=/home/josh/urlwatch-proxies/proxyenv/bin"
-/bin/uwsgi --ini flaskapp.ini
+ExecStart=/home/josh/urlwatch-proxies/proxyenv/bin/uwsgi --ini flaskapp.ini
 
 [Install]
 WantedBy=multi-user.target

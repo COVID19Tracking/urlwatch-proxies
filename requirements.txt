@@ -1,1 +1,4 @@
+wheel
 flask
+uwsgi
+requests
