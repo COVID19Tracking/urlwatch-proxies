@@ -2,3 +2,5 @@ wheel
 flask
 uwsgi
 requests
+hmac
+GitPython

@@ -1,5 +1,6 @@
 service setup:
 
+    sudo addgroup josh www-data
     sudo cp flaskapp.service /etc/systemd/system/flaskapp.service
     sudo systemctl daemon-reload
     sudo systemctl start flaskapp
@@ -12,3 +13,4 @@ nginx setup:
     sudo systemctl restart nginx
     sudo systemctl status nginx
     sudo ufw allow 'Nginx Full'
+    sudo tail -30 /var/log/nginx/error.log
