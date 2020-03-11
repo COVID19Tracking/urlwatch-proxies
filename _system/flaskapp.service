@@ -1,0 +1,16 @@
+# deploy to /etc/systemd/system/flaskapp.service
+
+Unit]
+Description=uWSGI instance to serve flaskapp
+After=network.target
+
+[Service]
+User=josh
+Group=www-data
+WorkingDirectory=/home/josh/urlwatch-proxies
+Environment="PATH=/home/josh/urlwatch-proxies/proxyenv/bin"
+ExecStart=/home/josh/urlwatch-proxies/Environment="PATH=/home/josh/urlwatch-proxies/proxyenv/bin"
+/bin/uwsgi --ini flaskapp.ini
+
+[Install]
+WantedBy=multi-user.target
