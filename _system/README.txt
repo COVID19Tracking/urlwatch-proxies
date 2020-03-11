@@ -7,7 +7,7 @@ service setup:
 
 nginx setup:
 
-    sudo cp flaskapp.site to /etc/nginx/sites-available/flaskapp
+    sudo cp flaskapp.site /etc/nginx/sites-available/flaskapp
     sudo ln -s /etc/nginx/sites-available/flaskapp /etc/nginx/sites-enabled
     sudo systemctl restart nginx
     sudo systemctl status nginx

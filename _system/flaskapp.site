@@ -1,9 +1,9 @@
 server {
     listen 80;
-    server_name covid19-api.exemplartech.com;
+    server_name covid19-api.exemplartech.com 159.89.50.25;
 
     location / {
         include uwsgi_params;
-        uwsgi_pass unix:/home/josh/urlfetch-proxies/flaskapp.sock;
+        uwsgi_pass unix:/home/josh/urlwatch-proxies/flaskapp.sock;
     }
 }
