@@ -1,14 +1,14 @@
 import os
 from flask import Flask
 
-from webhook import webhook
 
 app = Flask(__name__)
 
 # for auto-deploy support
-app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
-app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
-app.register_blueprint(webhook)
+#from webhook import webhook
+#app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
+#app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
+#app.register_blueprint(webhook)
 
 
 @app.route("/")
