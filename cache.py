@@ -146,8 +146,16 @@ class PageCache:
         xpath = self.get_cache_path(key, version)
         return os.path.exists(xpath)
 
+    def list_files(self, suffix: str = None) -> List[str]:
+        " list cached files "
+        result = []
+        for x in os.listdir(self.work_dir):
+            if suffix != None and not x.endswith(suffix): continue
+            result.append(x)
+        return result
+
     def list_html_files(self) -> List[str]:
-        " lists all cached viles "
+        " list all cached files ending w/html"
         result = []
         for x in os.listdir(self.work_dir):
             if not x.endswith(".html"): continue
@@ -218,6 +226,6 @@ class PageCache:
         xdir = self.get_cache_dir(version)
         if not os.path.exists(xdir): return
 
-        for fn in xdir:
+        for fn in os.listdir(xdir):
             xpath = os.path.join(xdir, fn)
             os.remove(xpath)
