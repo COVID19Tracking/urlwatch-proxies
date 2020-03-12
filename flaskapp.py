@@ -2,6 +2,7 @@ import os
 from flask import Flask
 import requests
 
+from regularize import regularize
 
 app = Flask(__name__)
 
@@ -19,6 +20,16 @@ def fetch(url: str) -> [bytes, int]:
         #logger.error(f"Exception: {ex}")
         return f"{ex}", 501
 
+@app.route("/proxy-raw/")
+@app.route("/proxy-raw/<path:dest>")
+def proxy_raw(dest: str):
+    if dest == None or dest == "":
+        return "", 200
+
+    url = f"https://{dest}"
+    content, status = fetch(url)
+    return content, status
+    
 @app.route("/proxy/")
 @app.route("/proxy/<path:dest>")
 def proxy(dest: str):
@@ -27,6 +38,8 @@ def proxy(dest: str):
 
     url = f"https://{dest}"
     content, status = fetch(url)
+    if content != None:
+        content = regularize(content)
     return content, status
     
 @app.route("/")
