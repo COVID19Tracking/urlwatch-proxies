@@ -11,24 +11,13 @@ from cache import PageCache
 import re
 import json
 import datetime
-import dateutil
 
 from typing import List, Dict
 
-class DateTimeEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, (datetime.date, datetime.datetime)):
-                return obj.isoformat()
-def DecodeDateTime(empDict):
-   if 'saved_at' in empDict:
-      empDict["saved_at"] = dateutil.parser.parse(empDict["saved_at"])
-      return empDict
-
 class PublicCache:
 
-    def __init__(self, cache: PageCache):
-
-        self.cache = cache
+    def __init__(self, xdir: str):
+        self.cache =  PageCache(xdir)
 
     def validate_id(self,xid: str):
 
@@ -66,14 +55,14 @@ class PublicCache:
         m_bytes = self.cache.load(xid + ".meta")
         if m_bytes == None: return None
         m = m_bytes.decode()
-        return json.loads(m, object_hook=DecodeDateTime)
+        return json.loads(m)
 
     def make_meta(self, content: bytes, xid: str, owner: str) -> Dict:
         return {
             "content_length": len(content),
             "id": xid,
             "owner": owner,
-            "saved_at": datetime.datetime.now()
+            "saved_at": datetime.datetime.now().isoformat()
         }
 
     def validate_owner(self, xid: str, owner: str):
@@ -87,7 +76,7 @@ class PublicCache:
         self.validate_id(xid)
         self.validate_owner(xid, owner)
         m = self.make_meta(content, xid, owner)
-        m_str = json.dumps(m, cls=DateTimeEncoder)
+        m_str = json.dumps(m)
         self.cache.save(m_str.encode(), xid + ".meta")
         self.cache.save(content, xid)
 

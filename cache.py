@@ -189,8 +189,6 @@ class PageCache:
         if os.path.exists(xto): os.remove(xto)
         if os.path.exists(xfrom): shutil.copy(xfrom, xto)
             
-
-
     def save(self, content: Union[bytes, None], key: str, version: str = None):
         """ saves content (bytes) to the cache
         if content is missing, delete it from the cache
@@ -209,6 +207,12 @@ class PageCache:
             w.write(content)
         finally:
             w.close()
+
+    def delete(self, key: str, version: str = None):
+        """ delete from the cache
+        """
+        xpath = self.get_cache_path(key, version, create_dir_if_missing=True)
+        if os.path.exists(xpath): os.remove(xpath)
 
     def cleanup(self, max_age_mins: int, version: str = None):
         """ remove old files in cache dir """
