@@ -10,10 +10,13 @@ app = Flask(__name__)
 #app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
 #app.register_blueprint(webhook)
 
+@app.route("/proxy/<path>")
+def proxy(path: str):
+    return f"<h3>proxy {path}"
 
 @app.route("/")
 def index():
-    return "<h3>COVID19 urlwatch-proxies v3</h3>"
+    return "<h3>COVID19 urlwatch-proxies v4</h3>"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
