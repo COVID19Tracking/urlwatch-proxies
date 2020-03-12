@@ -2,5 +2,6 @@ wheel
 flask
 uwsgi
 loguru
+lxml
 requests
 GitPython
