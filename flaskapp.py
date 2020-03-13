@@ -15,8 +15,8 @@ app = Flask(__name__)
 #app.register_blueprint(webhook)
 
 # -- public cache
-#g_public_cache = PublicCache("/home/josh/public-cache")
-g_public_cache = PublicCache("c:\\temp\\public-cache")
+g_public_cache = PublicCache("/home/josh/public-cache")
+#g_public_cache = PublicCache("c:\\temp\\public-cache")
 
 @app.route("/cache")
 def pc_list():
