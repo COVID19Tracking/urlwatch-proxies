@@ -3,7 +3,8 @@ from web_tester import WebTester
 import os
 import json
 
-site = WebTester("http://127.0.0.1:5000", trace=True)
+#site = WebTester("http://127.0.0.1:5000", trace=True)
+site = WebTester("http://covid19-api.exemplartech.com", trace=True)
 
 def delete_dir_if_exists(xdir: str):
     if not os.path.exists(xdir): return
@@ -39,5 +40,8 @@ def test_lifecycle():
     site.delete("/cache/test_content.html?owner=josh")
     x = site.get("/cache")
     assert(x == b'[]\n')
+
+    test_content = b"<html><body>hi</body></html"
+    site.post("/cache/test_content.html?owner=josh", test_content)
 
  
