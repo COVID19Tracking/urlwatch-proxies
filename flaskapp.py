@@ -30,7 +30,7 @@ def pc_list():
 def pc_get_meta(xid: str):
     try:
         x = g_public_cache.load_meta(xid)
-        if x == None: return "", 304
+        if x == None: return "", 404
         return jsonify(x), 200
     except Exception as ex:
         logger.error(f"Exception: {ex}")
@@ -40,7 +40,7 @@ def pc_get_meta(xid: str):
 def pc_get(xid: str):
     try:
         x = g_public_cache.load(xid)
-        if x == None: return "", 304
+        if x == None: return "", 404
         return x, 200
     except Exception as ex:
         logger.error(f"Exception: {ex}")
@@ -66,6 +66,25 @@ def pc_delete(xid: str):
     except Exception as ex:
         logger.error(f"Exception: {ex}")
         return "", 500
+
+# -- github data view:
+
+
+@app.route("/github-data/")
+@app.route("/github-data/<path:dest>")
+def github_preview(dest: str):
+
+    if not dest.endswith(".html") and not dest.endswith(".png"):
+        return "Only .html and .png supported", 500
+
+    repo_url = "https://github.com/joshuaellinger/corona19-data-archive/blob/master"
+    base_path = repo_url.replace("https://github.com/", "").replace("/blob", "")
+
+    preview_url = "https://raw.githubusercontent.com/" + base_path + "/" + dest
+
+    logger.info(f"fetch from {preview_url}")
+    return fetch(preview_url)
+
 
 # -- initial proxy code
 

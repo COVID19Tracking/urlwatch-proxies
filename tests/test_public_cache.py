@@ -4,13 +4,14 @@ import os
 import json
 
 site = WebTester("http://127.0.0.1:5000", trace=True)
+#site = WebTester("http://covid19-api.exemplartech.com", trace=True)
 
 def delete_dir_if_exists(xdir: str):
     if not os.path.exists(xdir): return
 
     for fn in os.listdir(xdir):
         xpath = os.path.join(xdir, fn)
-        os.remove(xpath)
+        if os.path.isfile(xpath): os.remove(xpath)
 
 def test_lifecycle():
 
@@ -21,7 +22,7 @@ def test_lifecycle():
 
     x, s = site.get_with_status("/cache/test_content.html")
     assert(x == b'')
-    assert(s == 304)
+    assert(s == 404)
 
     test_content = b"<html><body>hi</body></html"
     site.post("/cache/test_content.html?owner=josh", test_content)
@@ -39,5 +40,8 @@ def test_lifecycle():
     site.delete("/cache/test_content.html?owner=josh")
     x = site.get("/cache")
     assert(x == b'[]\n')
+
+    test_content = b"<html><body>hi</body></html"
+    site.post("/cache/test_content.html?owner=josh", test_content)
 
  

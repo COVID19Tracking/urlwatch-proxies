@@ -1,2 +1,4 @@
 __pycache__
 chromedriver.exe
+geckodriver.exe
+geckodriver.log
