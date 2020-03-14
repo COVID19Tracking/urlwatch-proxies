@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 import requests
 import json
 from loguru import logger
+import yaml
 
 from public_cache import PublicCache
 from regularize import regularize
@@ -78,20 +79,34 @@ def get_rawcontent_url(repo: str, link: str):
     return base_path + "/" + link
 
 @app.route("/config/urls.yaml")
-def config_urls():
+def config_urls_yaml():
 
     repo_url = "https://github.com/COVID19Tracking/covid-tracking/blob/master"
-    preview_url = get_rawcontent_url(repo_url, "urls.yaml")
-    logger.info(f"fetch from {preview_url}")
-    return fetch(preview_url)
+    yaml_url = get_rawcontent_url(repo_url, "urls.yaml")
+    logger.info(f"fetch from {yaml_url}")
+    return fetch(yaml_url)
+
+@app.route("/config/urls.json")
+def config_urls_json():
+
+    repo_url = "https://github.com/COVID19Tracking/covid-tracking/blob/master"
+    yaml_url = get_rawcontent_url(repo_url, "urls.yaml")
+    logger.info(f"fetch from {yaml_url}")
+    content, status = fetch(yaml_url)
+    if status >= 300: return "", status
+
+    items = yaml.load_all(content.decode())
+    
+    result = [x for x in items]
+    return jsonify(result), 200
+
 
 @app.route("/config/google-sheet.json")
 def config_google():
 
     main_sheet = "https://docs.google.com/spreadsheets/d/18oVRrHj3c183mHmq3m89_163yuYltLNlOmPerQ18E8w/htmlview?sle=true"
+    logger.info(f"fetch from {main_sheet}")
     content, status = fetch(main_sheet)
-    logger.info(f"status = {status}")
-
     if status >= 300: return "", status
 
     parser = SheetParser()

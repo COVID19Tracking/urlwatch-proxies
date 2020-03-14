@@ -18,6 +18,14 @@ def test_yaml():
         assert(x["name"] == "Alaska")
         break
 
+    content, status = site.get_with_status("/config/urls.json")
+    assert(status == 200)
+    
+    items = json.loads(content.decode())
+    for x in items:
+        assert(x["name"] == "Alaska")
+        break
+
 def test_google():
 
     content, status = site.get_with_status("/config/google-sheet.json")
