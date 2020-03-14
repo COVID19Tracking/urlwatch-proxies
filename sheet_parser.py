@@ -19,15 +19,14 @@ class SheetParser():
     def __init__(self):
         pass
 
-    def get_config(self, content: bytes) -> pd.DataFrame:
+    def get_config(self, content: bytes) -> List[Dict]:
         " gets the 'States' configuration table as a data frame"
         tree = html.fromstring(content)
         menu = self.get_menu(tree)
 
         x_id = menu["States"]
         states_table = tree.get_element_by_id(x_id)[0][0]
-        df = self.htmltable_to_dataframe(states_table)
-        return df
+        return self.htmltable_to_json(states_table)
 
     def get_menu(self, tree: etree) -> Dict[str, str]:
         " gets the tabs from a google sheet "
@@ -39,6 +38,35 @@ class SheetParser():
                 x_label = x[0].text
                 menu[x_label] = x_id
         return menu
+
+    def htmltable_to_json(self, table: etree) -> List[Dict]:
+        " converts a google sheet tab into List of Dict"
+        names = []
+        result = []
+        cnt = 0
+        for row in table[1]:
+            if cnt == 0:
+                for col in row:
+                    names.append(col.text)
+            elif cnt == 1:
+                pass # freeze-bar
+            else:
+                i = 0
+                vals = {} 
+                for col in row:
+                    if len(col) == 0: 
+                        val = col.text                        
+                    elif col[0].tag == 'a':
+                        val = col[0].get("href")
+                    else:
+                        val = html.tostring(col)
+                    n = names[i]
+                    if n !=None: vals[n] = str(val)
+                    i += 1
+                result.append(vals)
+            cnt += 1
+
+        return result
 
     def htmltable_to_dataframe(self, table: etree) -> pd.DataFrame:
         " converts a google sheet tab into a data frame"

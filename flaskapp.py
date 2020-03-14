@@ -3,8 +3,10 @@ from flask import Flask, request, jsonify
 import requests
 import json
 from loguru import logger
+
 from public_cache import PublicCache
 from regularize import regularize
+from sheet_parser import SheetParser
 
 app = Flask(__name__)
 
@@ -67,20 +69,46 @@ def pc_delete(xid: str):
         logger.error(f"Exception: {ex}")
         return "", 500
 
-# -- github data view:
 
+# -- data source:
+
+
+def get_rawcontent_url(repo: str, link: str):
+    base_path = repo.replace("https://github.com/", "https://raw.githubusercontent.com/").replace("/blob", "")
+    return base_path + "/" + link
+
+@app.route("/config/urls.yaml")
+def config_urls():
+
+    repo_url = "https://github.com/COVID19Tracking/covid-tracking/blob/master"
+    preview_url = get_rawcontent_url(repo_url, "urls.yaml")
+    logger.info(f"fetch from {preview_url}")
+    return fetch(preview_url)
+
+@app.route("/config/google-sheet.json")
+def config_google():
+
+    main_sheet = "https://docs.google.com/spreadsheets/d/18oVRrHj3c183mHmq3m89_163yuYltLNlOmPerQ18E8w/htmlview?sle=true"
+    content, status = fetch(main_sheet)
+    logger.info(f"status = {status}")
+
+    if status >= 300: return "", status
+
+    parser = SheetParser()
+    x = parser.get_config(content)
+    return jsonify(x), 200
+
+
+
+
+# -- github data view:
 
 @app.route("/github-data/")
 @app.route("/github-data/<path:dest>")
 def github_preview(dest: str):
 
-    if not dest.endswith(".html") and not dest.endswith(".png"):
-        return "Only .html and .png supported", 500
-
     repo_url = "https://github.com/joshuaellinger/corona19-data-archive/blob/master"
-    base_path = repo_url.replace("https://github.com/", "").replace("/blob", "")
-
-    preview_url = "https://raw.githubusercontent.com/" + base_path + "/" + dest
+    preview_url = get_rawcontent_url(repo_url, dest)
 
     logger.info(f"fetch from {preview_url}")
     return fetch(preview_url)
