@@ -19,12 +19,12 @@ class SheetParser():
     def __init__(self):
         pass
 
-    def get_config(self, content: bytes) -> List[Dict]:
-        " gets the 'States' configuration table as a data frame"
+    def get_config(self, content: bytes, tab: str) -> List[Dict]:
+        " gets a tab from the sheet as a data frame"
         tree = html.fromstring(content)
         menu = self.get_menu(tree)
 
-        x_id = menu["States"]
+        x_id = menu[tab]
         states_table = tree.get_element_by_id(x_id)[0][0]
         return self.htmltable_to_json(states_table)
 
