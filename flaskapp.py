@@ -212,7 +212,7 @@ def github_preview(dest: str):
         mimetype = get_mimetype(dest)
         if mimetype == None: return "Invalid FileType", 415
 
-        repo_url = "https://github.com/COVID19Tracking/covid-data-pipeline/blob/master"
+        repo_url = "https://github.com/COVID19Tracking/covid-data-archive/blob/master"
         preview_url = get_rawcontent_url(repo_url, dest)
 
         logger.info(f"fetch from {preview_url}")
