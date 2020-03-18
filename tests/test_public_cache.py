@@ -2,23 +2,17 @@ import pytest
 from web_tester import WebTester
 import os
 import json
+from loguru import logger
 
 site = WebTester("http://127.0.0.1:5000", trace=True)
 #site = WebTester("http://covid19-api.exemplartech.com", trace=True)
 
-def delete_dir_if_exists(xdir: str):
-    if not os.path.exists(xdir): return
-
-    for fn in os.listdir(xdir):
-        xpath = os.path.join(xdir, fn)
-        if os.path.isfile(xpath): os.remove(xpath)
-
 def test_lifecycle():
 
-    delete_dir_if_exists("c:\\temp\\public-cache")
-
     x = site.get("/cache")
-    assert(x == b'[]\n')
+    items = json.loads(x.decode())
+    for i in range(items):
+        logger.info(f"cache {i+1}: {items[i]}")
 
     x, s = site.get_with_status("/cache/test_content.html")
     assert(x == b'')

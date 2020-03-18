@@ -12,6 +12,7 @@ class WebTester:
         self.api_url = api_url
         self.trace = trace
         self.verify = False
+        self.response = None
 
         if self.trace:
             logger.info(f"base site is {api_url}")
@@ -41,6 +42,7 @@ class WebTester:
         url = self.expand_url(sub_url)
         self.trace_before("GET", url)
         resp = requests.get(url, verify=self.verify)
+        self.response = resp
         self.trace_after("GET", url, resp)
         return resp.content
 
@@ -48,13 +50,16 @@ class WebTester:
         url = self.expand_url(sub_url)
         self.trace_before("GET", url)
         resp = requests.get(url, verify=self.verify)
+        self.response = resp
         self.trace_after("GET", url, resp, check_status=False)
         return resp.content, resp.status_code
+
 
     def post(self, sub_url: str, content: bytes) -> bytes:
         url = self.expand_url(sub_url)
         self.trace_before("POST", url)
         resp = requests.post(url, data=content, verify=self.verify)
+        self.response = resp
         self.trace_after("POST", url, resp)
         return resp.content
 
@@ -62,5 +67,6 @@ class WebTester:
         url = self.expand_url(sub_url)
         self.trace_before("DELETE", url)
         resp = requests.delete(url)
+        self.response = resp
         self.trace_after("DELETE", url, resp)
         return resp.content
