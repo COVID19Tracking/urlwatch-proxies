@@ -31,6 +31,7 @@ mimetypes = {
 def get_mimetype(xid: str) -> str:
     if xid == None : return None
     ext = os.path.splitext(xid)
+    if ext == None or len(ext) < 2: return None
     return mimetypes.get(ext[1])
 
 def fetch(url: str) -> [bytes, int]:
@@ -53,15 +54,31 @@ g_public_cache = PublicCache("/home/josh/public-cache")
 #g_public_cache = PublicCache("c:\\temp\\public-cache")
 
 @app.route("/cache", methods=["GET"])
-def pc_list():
+@app.route("/cache/", methods=["GET"])
+def cache_list():
     try:
-        return jsonify(g_public_cache.list_items()), 200
+
+        owner = request.args.get("owner")    
+
+        full = request.args.get("full")
+        items = g_public_cache.list_items()    
+
+        if owner != None:
+            items = [x for x in items if x["owner"] == owner]
+
+        if full != "1": 
+            items = [x["id"] for x in items]
+        elif owner == None: 
+            raise Exception("Must provide owner if full=1")
+
+
+        return jsonify(items), 200
     except Exception as ex:
         logger.error(f"Exception: {ex}")
         return str(ex), 500
 
-@app.route("/cache/meta/<xid>", methods=["GET"])
-def pc_get_meta(xid: str):
+@app.route("/cache/meta-data/<xid>", methods=["GET"])
+def cache_get_meta(xid: str):
     try:
         x = g_public_cache.load_meta(xid)
         if x == None: return "", 404
@@ -71,7 +88,7 @@ def pc_get_meta(xid: str):
         return "", 500
 
 @app.route("/cache/<xid>", methods=["GET"])
-def pc_get(xid: str):
+def cache_get(xid: str):
     try:
         x = g_public_cache.load(xid)
         if x == None: return "Missing File", 404
@@ -83,7 +100,7 @@ def pc_get(xid: str):
         return "", 500
 
 @app.route("/cache/<xid>", methods=["POST"])
-def pc_post(xid: str):
+def cache_post(xid: str):
 
     mimetype = get_mimetype(xid)
     if mimetype == None: return "Invalid FileType", 415
@@ -105,7 +122,7 @@ def pc_post(xid: str):
         return "Internal Error", 500
 
 @app.route("/cache/<xid>", methods=["DELETE"])
-def pc_delete(xid: str):
+def cache_delete(xid: str):
     owner = request.args.get("owner")    
     if owner == None: return "Missing owner", 401
 
@@ -171,8 +188,8 @@ def config_google_states():
     x = parser.get_config(content, "States")
     return jsonify(x), 200
 
-@app.route("/config/google/counties", methods=["GET"])
-def config_google_counties():
+@app.route("/config/google/current", methods=["GET"])
+def config_google_current():
 
     main_sheet = "https://docs.google.com/spreadsheets/d/18oVRrHj3c183mHmq3m89_163yuYltLNlOmPerQ18E8w/htmlview?sle=true"
     logger.info(f"fetch from {main_sheet}")
@@ -180,7 +197,7 @@ def config_google_counties():
     if status >= 300: return content, status
 
     parser = SheetParser()
-    x = parser.get_config(content, "Counties")
+    x = parser.get_config(content, "States current")
     return jsonify(x), 200
 
 
@@ -190,6 +207,8 @@ def config_google_counties():
 @app.route("/github-data/<path:dest>", methods=["GET"])
 def github_preview(dest: str):
     try:
+        if dest == "/": return "", 200
+
         mimetype = get_mimetype(dest)
         if mimetype == None: return "Invalid FileType", 415
 

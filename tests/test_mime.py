@@ -9,10 +9,12 @@ def test_good_mime():
 
     x = site.get("/github-data/extract/index.html")
     assert(b"<html" in x)
+    
     x, status = site.get_with_status("/github-data/extract/index.json")
     assert(status == 404)
-    x = site.get("/github-data/extract/change_list.json")
-    assert(len(json.load(x.decode())) > 0)
+
+    x = site.get("/github-data/raw/change_list.json")
+    assert(len(json.loads(x.decode())) > 0)
 
 def test_bad_mime():
 

@@ -4,7 +4,7 @@
 #    gets data out of the main google worksheet.
 #
 import os
-from typing import List, Dict
+from typing import List, Dict, Union
 from loguru import logger
 
 from lxml import html, etree
@@ -28,8 +28,14 @@ class SheetParser():
         states_table = tree.get_element_by_id(x_id)[0][0]
         return self.htmltable_to_json(states_table)
 
-    def get_menu(self, tree: etree) -> Dict[str, str]:
+    def get_menu(self, content: Union[html.Element, bytes]) -> Dict[str, str]:
         " gets the tabs from a google sheet "
+
+        if type(content) == bytes:
+            tree = html.fromstring(content)
+        else:
+            tree = content
+
         xmenu = tree.get_element_by_id("sheet-menu")
         menu = {}
         for x in xmenu:
