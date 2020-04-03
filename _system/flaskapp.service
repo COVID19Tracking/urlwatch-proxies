@@ -1,13 +1,10 @@
-[Unit]
-Description=Gunicorn instance to serve flaskapp
-After=network.target
-
-[Service]
-User=josh
-Group=www-data
-WorkingDirectory=/home/josh/urlwatch_proxies
-Environment="PATH=/home/josh/urlwatch_proxies/proxyenv/bin"
-ExecStart=/home/josh/urlwatch_proxies/proxyenv/bin/gunicorn --workers 3 --bind unix:flaskapp.sock -m 007 wsgi:app
-
-[Install]
-WantedBy=multi-user.target
+server {
+    listen 80;
+    server_name covid19-api.exemplartech.com 159.89.50.25;
+    server_name url-proxy.covidtracking.com 159.89.50.25;
+ 
+    location / {
+        include proxy_params;
+        uwsgi_pass unix:/home/josh/urlwatch_proxies/flaskapp.sock;
+    }
+}
