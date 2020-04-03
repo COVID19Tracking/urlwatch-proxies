@@ -1,13 +1,13 @@
 [Unit]
-Description=uWSGI instance to serve flaskapp
+Description=Gunicorn instance to serve flaskapp
 After=network.target
 
 [Service]
 User=josh
 Group=www-data
-WorkingDirectory=/home/josh/urlwatch-proxies
-Environment="PATH=/home/josh/urlwatch-proxies/proxyenv/bin"
-ExecStart=/home/josh/urlwatch-proxies/proxyenv/bin/uwsgi --ini flaskapp.ini
+WorkingDirectory=/home/josh/urlwatch_proxies
+Environment="PATH=/home/josh/urlwatch_proxies/proxyenv/bin"
+ExecStart=/home/josh/urlwatch_proxies/proxyenv/bin/gunicorn --workers 3 --bind unix:flaskapp.sock -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target

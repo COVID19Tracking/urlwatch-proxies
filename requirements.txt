@@ -1,8 +1,11 @@
 wheel
 flask
-uwsgi
 loguru
 lxml
 pandas
 pyyaml
 requests
+
+#python 3.8 does not support uwsgi so unsing gunicorn
+#uwsgi
+gunicorn

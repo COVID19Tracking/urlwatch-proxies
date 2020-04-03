@@ -11,6 +11,7 @@ from sheet_parser import SheetParser
 
 app = Flask(__name__)
 
+
 mimetypes = {
         '.html': 'text/html',
         '.xhtml': 'text/xhtml+xml',

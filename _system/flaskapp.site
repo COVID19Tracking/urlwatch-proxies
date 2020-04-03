@@ -4,6 +4,6 @@ server {
 
     location / {
         include uwsgi_params;
-        uwsgi_pass unix:/home/josh/urlwatch-proxies/flaskapp.sock;
+        uwsgi_pass unix:/home/josh/urlwatch_proxies/flaskapp.sock;
     }
 }
